@@ -92,7 +92,11 @@ class Client(object):
             # running os.makedirs below
             if os.path.isfile(destdir):
                 os.remove(destdir)
-            os.makedirs(destdir)
+            try:
+                os.makedirs(destdir)
+            except OSError as exc:
+                if exc.errno != errno.EEXIST: # ignore if it was there already
+                    raise
         yield dest
         os.umask(cumask)
 
